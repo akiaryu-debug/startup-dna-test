@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>START-UP DNA 테스트</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* 기본 스타일 */
+        body {
+            font-family: 'Noto Sans KR', 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #e0f2f7 0%, #c1e4ee 100%);
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        .container {
+            background-color: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            max-width: 550px;
+            width: 100%;
+            box-sizing: border-box;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        /* 애니메이션 정의 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 헤더 스타일 */
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            color: #005A9C;
+            font-size: 2.2em;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: 1.6em;
+            margin-bottom: 25px;
+            font-weight: 500;
+            color: #444;
+            line-height: 1.4;
+        }
+
+        p {
+            font-size: 1.1em;
+            line-height: 1.7;
+            margin-bottom: 40px;
+            color: #555;
+            font-weight: 300;
+        }
+
+        /* 버튼 스타일 */
+        .button {
+            display: block;
+            width: 100%;
+            padding: 18px 20px;
+            margin: 12px 0;
+            border: 2px solid #007BFF;
+            border-radius: 12px;
+            background-color: #ffffff;
+            color: #007BFF;
+            font-size: 1.15em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .button:hover {
+            background-color: #e0f2f7;
+            color: #0056b3;
+            border-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .button.selected {
+             background-color: #007BFF;
+             color: white;
+             border-color: #007BFF;
+             box-shadow: 0 4px 10px rgba(0,123,255,0.4);
+             transform: translateY(-1px);
+        }
+        
+        .nav-button {
+            display: block;
+            width: 100%;
+            padding: 18px 30px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.25em;
+            font-weight: 700;
+            margin-top: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 10px rgba(40,167,69,0.4);
+        }
+
+        .nav-button:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        /* 숨김 처리 클래스 */
+        .hidden {
+            display: none;
+        }
+
+        /* 질문 컨테이너 */
+        #question-container {
+            text-align: left;
+        }
+        #question-title {
+            animation: slideInUp 0.6s ease-out;
+        }
+        #answer-buttons .button {
+            animation: slideInUp 0.4s ease-out forwards;
+            opacity: 0;
+        }
+        #answer-buttons .button:nth-child(1) { animation-delay: 0.1s; }
+        #answer-buttons .button:nth-child(2) { animation-delay: 0.2s; }
+        #answer-buttons .button:nth-child(3) { animation-delay: 0.3s; }
+        #answer-buttons .button:nth-child(4) { animation-delay: 0.4s; }
+
+        /* 결과 화면 스타일 */
+        .result-block {
+            margin-bottom: 40px;
+        }
+        .result-block:last-child {
+            margin-bottom: 0;
+        }
+        #result-header {
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            font-weight: 500;
+            color: #444;
+        }
+        .result-image {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 25px;
+            border: 6px solid #005A9C;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .result-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2em;
+            font-weight: 700;
+            color: #005A9C;
+            margin-bottom: 15px;
+        }
+        .result-description {
+            font-size: 1.15em;
+            line-height: 1.7;
+            color: #444;
+            font-weight: 400;
+            margin-bottom: 0;
+        }
+        #start-screen p {
+            font-size: 1.2em;
+            font-weight: 400;
+            color: #444;
+        }
+        #start-btn {
+            font-size: 1.3em;
+            padding: 20px;
+            border-color: #007BFF;
+            background-color: #007BFF;
+            color: white;
+        }
+        #start-btn:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="start-screen">
+            <h1>START-UP DNA 테스트</h1>
+            <p>"만약 내가 창업을 한다면?"<br>즐거운 상상을 통해 당신의 창업가 유형을 알아보세요!</p>
+            <button class="button" id="start-btn" style="text-align: center;">시작하기</button>
+        </div>
+
+        <div id="question-container" class="hidden">
+            <h2 id="question-title"></h2>
+            <div id="answer-buttons"></div>
+            <div id="nav-container"></div>
+        </div>
+
+        <div id="result-screen" class="hidden">
+            </div>
+    </div>
+
+    <script>
+        const startScreen = document.getElementById('start-screen');
+        const questionContainer = document.getElementById('question-container');
+        const resultScreen = document.getElementById('result-screen');
+        const startBtn = document.getElementById('start-btn');
+        const questionTitle = document.getElementById('question-title');
+        const answerButtons = document.getElementById('answer-buttons');
+        const navContainer = document.getElementById('nav-container');
+
+        const questions = [
+            { question: "Q1. 만약 당신이 창업을 한다면, 어떤 순간에 '바로 이거다!' 싶을까요?", answers: [ { text: "세상에 없던 새로운 기술이나 아이디어가 떠올랐을 때", type: "A" }, { text: "이미 있는 서비스지만, 더 효율적으로 만들 자신이 생겼을 때", type: "B" }, { text: "주변 사람들이 공통적으로 겪는 불편한 문제를 발견했을 때", type: "C" }, { text: "함께하면 무엇이든 해낼 수 있을 것 같은 동료들을 만났을 때", type: "D" }, ] },
+            { question: "Q2. 당신이 만약 스타트업의 리더라면, 가장 자신 있는 능력은 무엇인가요?", answers: [ { text: "미래의 가능성을 남들보다 먼저 그려보는 통찰력", type: "A" }, { text: "목표를 정하면 반드시 결과물로 만들어내는 실행력", type: "B" }, { text: "고객의 숨은 니즈까지 파악해내는 깊은 공감 능력", type: "C" }, { text: "낯선 사람도 내 편으로 만드는 뛰어난 소통 능력", type: "D" }, ] },
+            { question: "Q3. 만약 당신의 회사가 위기에 빠졌다면, 어떻게 해결해 나갈까요?", answers: [ { text: "기존의 방식을 뒤엎는 혁신적인 아이디어로 위기를 돌파한다.", type: "A" }, { text: "데이터를 기반으로 문제의 원인을 분석하고 시스템을 개선한다.", type: "B" }, { text: "고객의 목소리에 집중하며 해결의 실마리를 찾는다.", type: "C" }, { text: "신뢰하는 파트너나 외부 전문가의 도움을 적극적으로 구한다.", type: "D" }, ] },
+            { question: "Q4. 만약 당신이 팀을 꾸린다면, 어떤 동료를 가장 먼저 영입하고 싶나요?", answers: [ { text: "누구도 따라올 수 없는 독보적인 기술을 가진 전문가", type: "A" }, { text: "묵묵히 자기 몫을 해내며 팀의 중심을 잡아주는 안정적인 동료", type: "B" }, { text: "우리 회사의 비전에 진심으로 공감하고 열정을 가진 사람", type: "C" }, { text: "함께 있는 것만으로도 힘이 되는 긍정적인 에너지를 가진 사람", type: "D" }, ] },
+            { question: "Q5. 만약 당신의 창업이 성공한다면, 어떤 모습일 때 가장 뿌듯할까요?", answers: [ { text: "나의 아이디어가 세상의 당연한 표준이 되었을 때", type: "A" }, { text: "우리 회사가 오랫동안 사랑받는 탄탄한 기업으로 성장했을 때", type: "B" }, { text: "수많은 사람들이 \"이 서비스 덕분에 삶이 편해졌어요!\"라고 말해줄 때", type: "C" }, { text: "함께 고생한 동료들과 다 같이 성공의 기쁨을 나눌 때", type: "D" }, ] },
+        ];
+        
+        const results = {
+            A: { title: "🚀 비전 혁신가 (故 이병철)", description: "이병철 창업주처럼, 당신은 남들이 보지 못하는 미래를 현실로 만들 힘이 있습니다.", image: "lee_byung_chul.jpg" },
+            B: { title: "📈 성장 실행가 (故 조홍제)", description: "조홍제 창업주처럼, 당신은 탄탄한 기술력과 치밀한 실행력으로 지속가능한 성공을 이룰 수 있습니다.", image: "cho_hong_jai.jpg" },
+            C: { title: "🎯 문제 해결사 (故 구인회)", description: "구인회 창업주처럼, 당신은 일상의 불편함 속에서 세상을 놀라게 할 사업 기회를 발견할 수 있습니다.", image: "koo_in_hwoi.jpg" },
+            D: { title: "🤝 관계 연결가 (故 허만정)", description: "허만정 창업주처럼, 당신은 사람에 대한 신뢰를 바탕으로 함께 더 큰 성공을 만들어내는 리더십을 가졌습니다.", image: "huh_man_jung.jpg" }
+        };
+
+        let currentQuestionIndex = 0;
+        let scores = { A: 0, B: 0, C: 0, D: 0 };
+        let selectedButton = null;
+
+        startBtn.addEventListener('click', startQuiz);
+
+        function startQuiz() {
+            startScreen.classList.add('hidden');
+            questionContainer.classList.remove('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            resetState();
+            const currentQuestion = questions[currentQuestionIndex];
+            questionTitle.innerText = currentQuestion.question;
+            const shuffledAnswers = currentQuestion.answers.sort(() => Math.random() - 0.5);
+
+            shuffledAnswers.forEach(answer => {
+                const button = document.createElement('button');
+                button.innerText = answer.text;
+                button.classList.add('button');
+                button.dataset.type = answer.type;
+                button.addEventListener('click', selectAnswer);
+                answerButtons.appendChild(button);
+            });
+        }
+
+        function resetState() {
+            selectedButton = null;
+            while (answerButtons.firstChild) {
+                answerButtons.removeChild(answerButtons.firstChild);
+            }
+            while (navContainer.firstChild) {
+                navContainer.removeChild(navContainer.firstChild);
+            }
+        }
+        
+        function selectAnswer(e) {
+            const clickedButton = e.target;
+
+            if (selectedButton === clickedButton) {
+                selectedButton.classList.remove('selected');
+                selectedButton = null;
+                const nextButton = document.getElementById('next-btn');
+                if (nextButton) nextButton.remove();
+            } else {
+                if (selectedButton) {
+                    selectedButton.classList.remove('selected');
+                }
+                selectedButton = clickedButton;
+                selectedButton.classList.add('selected');
+                
+                if (!document.getElementById('next-btn')) {
+                    const nextButton = document.createElement('button');
+                    nextButton.innerText = (currentQuestionIndex === questions.length - 1) ? '결과보기' : '다음으로';
+                    nextButton.classList.add('button', 'nav-button');
+                    nextButton.id = 'next-btn';
+                    nextButton.addEventListener('click', goToNext);
+                    navContainer.appendChild(nextButton);
+                }
+            }
+        }
+
+        function goToNext() {
+            if (!selectedButton) return;
+
+            const type = selectedButton.dataset.type;
+            scores[type]++;
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            questionContainer.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+            resultScreen.innerHTML = ''; // 이전 결과 비우기
+
+            let maxScore = 0;
+            for(const type in scores) {
+                if(scores[type] > maxScore) {
+                    maxScore = scores[type];
+                }
+            }
+
+            let maxScoreTypes = [];
+            for(const type in scores) {
+                if(scores[type] === maxScore) {
+                    maxScoreTypes.push(type);
+                }
+            }
+
+            // 동점일 경우 안내 헤더 추가
+            if (maxScoreTypes.length > 1) {
+                const header = document.createElement('h2');
+                header.id = 'result-header';
+                header.innerText = `당신은 ${maxScoreTypes.length}가지 유형의 가능성을 함께 가지고 있습니다!`;
+                resultScreen.appendChild(header);
+            }
+
+            // 결과 유형들을 화면에 표시
+            maxScoreTypes.forEach(type => {
+                const resultData = results[type];
+                
+                const resultBlock = document.createElement('div');
+                resultBlock.classList.add('result-block');
+
+                const img = document.createElement('img');
+                img.classList.add('result-image');
+                img.src = resultData.image;
+                img.alt = resultData.title;
+
+                const title = document.createElement('h2');
+                title.classList.add('result-title');
+                title.innerHTML = resultData.title;
+
+                const description = document.createElement('p');
+                description.classList.add('result-description');
+                description.innerText = resultData.description;
+
+                resultBlock.appendChild(img);
+                resultBlock.appendChild(title);
+                resultBlock.appendChild(description);
+                resultScreen.appendChild(resultBlock);
+            });
+        }
+    </script>
+</body>
+</html>
