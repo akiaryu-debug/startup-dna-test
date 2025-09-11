@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>창업 상식 퀴즈</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* 기본 스타일 */
+        body {
+            font-family: 'Noto Sans KR', 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        .container {
+            background-color: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            max-width: 550px;
+            width: 100%;
+            box-sizing: border-box;
+            animation: fadeIn 0.8s ease-out;
+            position: relative;
+        }
+
+        /* 애니메이션 정의 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 헤더 스타일 */
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            color: #16a34a;
+            font-size: 2.2em;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: 1.6em;
+            margin-bottom: 25px;
+            font-weight: 500;
+            color: #444;
+            line-height: 1.4;
+        }
+
+        p {
+            font-size: 1.1em;
+            line-height: 1.7;
+            margin-bottom: 40px;
+            color: #555;
+            font-weight: 300;
+        }
+
+        /* 버튼 스타일 */
+        .button {
+            display: block;
+            width: 100%;
+            padding: 18px 20px;
+            margin: 12px 0;
+            border: 2px solid #22c55e;
+            border-radius: 12px;
+            background-color: #ffffff;
+            color: #22c55e;
+            font-size: 1.15em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .button:hover {
+            background-color: #dcfce7;
+            color: #16a34a;
+            border-color: #16a34a;
+            transform: translateY(-2px);
+        }
+
+        .button.selected {
+             background-color: #22c55e;
+             color: white;
+             border-color: #22c55e;
+             box-shadow: 0 4px 10px rgba(34,197,94,0.4);
+             transform: translateY(-1px);
+        }
+        
+        .nav-button {
+            display: block;
+            width: 100%;
+            padding: 18px 30px;
+            background-color: #16a34a;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.25em;
+            font-weight: 700;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 10px rgba(22,163,74,0.4);
+        }
+
+        .nav-button:hover {
+            background-color: #15803d;
+            transform: translateY(-2px);
+        }
+
+        .feedback-box {
+            margin-top: 30px;
+            display: block;
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 500;
+            text-align: center;
+            box-sizing: border-box;
+            line-height: 1.6;
+        }
+        .feedback-box.correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        .feedback-box.wrong {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        /* 숨김 처리 클래스 */
+        .hidden {
+            display: none !important;
+        }
+
+        /* 질문 컨테이너 */
+        #question-container {
+            text-align: left;
+        }
+        #question-title {
+            animation: slideInUp 0.6s ease-out;
+        }
+        #answer-buttons .button {
+            animation: slideInUp 0.4s ease-out forwards;
+            opacity: 0;
+        }
+        #answer-buttons .button:nth-child(1) { animation-delay: 0.1s; }
+        #answer-buttons .button:nth-child(2) { animation-delay: 0.2s; }
+        #answer-buttons .button:nth-child(3) { animation-delay: 0.3s; }
+        #answer-buttons .button:nth-child(4) { animation-delay: 0.4s; }
+
+        /* 결과 화면 스타일 */
+        .result-screen-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2em;
+            font-weight: 700;
+            color: #16a34a;
+            margin-bottom: 15px;
+        }
+        .score-display {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #0d9488;
+            margin-bottom: 30px;
+        }
+        .quiz-summary-item {
+            margin-bottom: 25px;
+            text-align: left;
+            padding: 15px;
+            background-color: #f8fafc;
+            border-left: 5px solid #a7f3d0;
+            border-radius: 8px;
+        }
+        .quiz-summary-item h3 {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #065f46;
+            margin-bottom: 8px;
+        }
+        .quiz-summary-item p {
+            font-size: 1em;
+            color: #333;
+            line-height: 1.5;
+            margin-bottom: 5px;
+        }
+        .quiz-summary-item .correct-answer {
+            font-weight: 700;
+            color: #16a34a;
+        }
+        .quiz-summary-item .explanation {
+            font-style: italic;
+            color: #555;
+            margin-top: 10px;
+            border-top: 1px dashed #e2e8f0;
+            padding-top: 10px;
+        }
+        
+        /* 축하 메시지 스타일 */
+        .success-message {
+            padding: 20px;
+            margin-bottom: 30px;
+            background-color: #fef9c3; /* 노란색 배경 */
+            border: 2px solid #facc15; /* 진한 노란색 테두리 */
+            border-radius: 12px;
+            animation: fadeIn 0.5s ease-out;
+        }
+        .success-message .trophy-icon {
+            width: 60px;
+            height: 60px;
+            color: #f59e0b; /* 금색 */
+            margin-bottom: 10px;
+        }
+        .success-message h2 {
+            color: #ca8a04;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        .success-message p {
+            font-size: 1.1em;
+            color: #a16207;
+            margin-bottom: 0;
+        }
+        
+        /* 재시도 메시지 스타일 */
+        .failure-message {
+            padding: 20px;
+            margin-bottom: 30px;
+            background-color: #f1f5f9; /* 회색 배경 */
+            border: 2px solid #cbd5e1; /* 진한 회색 테두리 */
+            border-radius: 12px;
+            animation: fadeIn 0.5s ease-out;
+        }
+        .failure-message p {
+            font-size: 1.15em;
+            font-weight: 500;
+            color: #475569;
+            margin-bottom: 0;
+            line-height: 1.6;
+        }
+
+        #start-screen p {
+            font-size: 1.2em;
+            font-weight: 400;
+            color: #444;
+        }
+        #start-btn {
+            font-size: 1.3em;
+            padding: 20px;
+            border-color: #16a34a;
+            background-color: #16a34a;
+            color: white !important;
+        }
+        #start-btn:hover {
+            background-color: #15803d;
+            border-color: #15803d;
+        }
+        #restart-btn {
+            background-color: #0ea5e9;
+            box-shadow: 0 4px 10px rgba(14,165,233,0.4);
+        }
+        #restart-btn:hover {
+            background-color: #0284c7;
+        }
+
+        /* 로딩 스피너 */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #16a34a;
+            animation: spin 1s ease infinite;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="start-screen">
+            <h1>창업 상식 퀴즈</h1>
+            <p>"딱딱한 창업, 재미있는 퀴즈로 레벨업!"<br>5가지 퀴즈를 풀고 당신의 창업 상식 레벨을 확인해보세요!</p>
+            <button class="button" id="start-btn" style="text-align: center;">퀴즈 시작</button>
+        </div>
+
+        <div id="question-container" class="hidden">
+            <h2 id="question-title"></h2>
+            <div id="answer-buttons"></div>
+            <div id="nav-container"></div>
+        </div>
+
+        <div id="result-screen" class="hidden">
+            <h1 class="result-screen-title">퀴즈 결과</h1>
+            <p class="score-display">총 <span id="final-score">0</span> / 5 문제 정답!</p>
+            <div id="quiz-summary"></div>
+            <button class="button nav-button" id="restart-btn" style="text-align: center; margin-top: 40px;">다시 시작하기</button>
+        </div>
+    </div>
+    
+    <div id="loading-overlay" class="overlay hidden"> 
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        const startScreen = document.getElementById('start-screen');
+        const questionContainer = document.getElementById('question-container');
+        const resultScreen = document.getElementById('result-screen');
+        const startBtn = document.getElementById('start-btn');
+        const questionTitle = document.getElementById('question-title');
+        const answerButtons = document.getElementById('answer-buttons');
+        const navContainer = document.getElementById('nav-container');
+        const finalScoreDisplay = document.getElementById('final-score');
+        const quizSummary = document.getElementById('quiz-summary');
+        const restartBtn = document.getElementById('restart-btn');
+        const loadingOverlay = document.getElementById('loading-overlay');
+
+        const questions = [
+            { question: "기업 가치가 1조 원 이상인 비상장 스타트업을 신화 속 동물에 빗대어 부르는 용어는 무엇일까요?", answers: [ { text: "데카콘 (Decacorn)", isCorrect: false }, { text: "유니콘 (Unicorn)", isCorrect: true }, { text: "엔젤 (Angel)", isCorrect: false }, { text: "엑셀러레이터 (Accelerator)", isCorrect: false }, ], explanation: "유니콘은 기업 가치 1조 원($1 Billion) 이상의 스타트업을, 데카콘은 10조 원 이상의 스타트업을 의미합니다. 엔젤은 초기 스타트업에 투자하는 개인 투자자를 뜻해요!" },
+            { question: "대한민국 「중소기업창업 지원법」에 따르면, '창업기업'은 창업일로부터 몇 년이 지나지 않은 기업을 의미할까요?", answers: [ { text: "3년", isCorrect: false }, { text: "7년", isCorrect: true }, { text: "10년", isCorrect: false }, { text: "15년", isCorrect: false }, ], explanation: "국내 법률상 '창업기업'은 창업 후 7년 이내의 기업을 뜻하며, 정부 및 지자체의 다양한 창업 지원 사업은 주로 이 기간 내의 기업을 대상으로 합니다." },
+            { question: "경상국립대학교에서 혁신적인 아이디어를 가진 학생들의 창업을 지원하고, 직접적인 사업화 자금을 제공하여 유니콘 기업으로 성장할 수 있도록 돕는 사업단은 어디일까요?", answers: [ { text: "경상국립대학교 학생지원처", isCorrect: false }, { text: "경상국립대학교 산학협력단", isCorrect: false }, { text: "경상국립대학교 창업보육센터", isCorrect: false }, { text: "경상국립대학교 창업중심대학사업단", isCorrect: true }, ], explanation: "우리 경상국립대학교 창업중심대학사업단은 학생들의 창업 아이디어를 현실로 만들고 성장시키는 데 필요한 사업화 자금, 멘토링, 교육 등 전방위적인 지원을 아끼지 않습니다! 지금 바로 사업단에 문의해보세요!" },
+            { question: "성공적인 스타트업 창업을 위해 가장 중요하게 고려해야 할 요소가 아닌 것은 무엇일까요?", answers: [ { text: "압도적인 초기 투자 유치 금액", isCorrect: true }, { text: "시장의 문제점을 해결하는 혁신적인 아이디어", isCorrect: false }, { text: "아이디어를 실행할 수 있는 역량 있는 팀원", isCorrect: false }, { text: "빠르게 변화하는 시장에 적응하는 실행력", isCorrect: false }, ], explanation: "초기 투자금도 중요하지만, 지나치게 큰 투자금 자체보다는 혁신적인 아이디어, 뛰어난 팀원, 그리고 시장에 대한 빠른 실행력이 훨씬 중요합니다. 때로는 적은 자본으로도 훌륭하게 시작할 수 있어요!" },
+            { question: "아이디어는 있지만 아직 사업자 등록을 하지 않은 대학생 예비 창업팀이 가장 먼저 도전해볼 만한 교내 창업 지원 프로그램은 무엇일까요?", answers: [ { text: "창업동아리", isCorrect: true }, { text: "엔젤 투자 유치", isCorrect: false }, { text: "정부 R&D 과제 수주", isCorrect: false }, { text: "코스닥 상장(IPO)", isCorrect: false }, ], explanation: "창업동아리는 아이디어를 구체화하고, 팀원을 모으며, 시제품 제작 지원금이나 멘토링 등 초기 지원을 받을 수 있는 최고의 첫걸음입니다. 궁금한 점이 있다면 언제든 우리 창업중심대학 사업단에 문의하세요!" },
+        ];
+        
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedButton = null;
+        let quizAnswers = [];
+
+        startBtn.addEventListener('click', startQuiz);
+        restartBtn.addEventListener('click', restartQuiz);
+
+        function showLoading() { loadingOverlay.classList.remove('hidden'); }
+        function hideLoading() { loadingOverlay.classList.add('hidden'); }
+
+        function startQuiz() {
+            showLoading();
+            setTimeout(() => {
+                hideLoading();
+                startScreen.classList.add('hidden');
+                questionContainer.classList.remove('hidden');
+                currentQuestionIndex = 0; score = 0; quizAnswers = [];
+                showQuestion();
+            }, 500);
+        }
+
+        function showQuestion() {
+            resetState();
+            const currentQuestion = questions[currentQuestionIndex];
+            questionTitle.innerHTML = `Q${currentQuestionIndex + 1}. ${currentQuestion.question}`;
+            
+            const shuffledAnswers = currentQuestion.answers.sort(() => Math.random() - 0.5);
+            shuffledAnswers.forEach(answer => {
+                const button = document.createElement('button');
+                button.innerText = answer.text;
+                button.classList.add('button');
+                button.dataset.isCorrect = answer.isCorrect;
+                button.addEventListener('click', selectAnswer);
+                answerButtons.appendChild(button);
+            });
+        }
+
+        function resetState() {
+            selectedButton = null;
+            while (answerButtons.firstChild) { answerButtons.removeChild(answerButtons.firstChild); }
+            while (navContainer.firstChild) { navContainer.removeChild(navContainer.firstChild); }
+        }
+        
+        function selectAnswer(e) {
+            const clickedButton = e.target;
+            if (navContainer.querySelector('.feedback-box')) { return; }
+
+            if (selectedButton) { selectedButton.classList.remove('selected'); }
+            selectedButton = clickedButton;
+            selectedButton.classList.add('selected');
+            
+            if (!document.getElementById('submit-answer-btn')) {
+                const submitButton = document.createElement('button');
+                submitButton.innerText = '정답 확인';
+                submitButton.classList.add('button', 'nav-button');
+                submitButton.style.marginTop = '30px';
+                submitButton.id = 'submit-answer-btn';
+                submitButton.addEventListener('click', checkAnswer);
+                navContainer.appendChild(submitButton);
+            }
+        }
+
+        function checkAnswer() {
+            if (!selectedButton) return;
+            const isCorrect = selectedButton.dataset.isCorrect === 'true';
+            const currentQuestion = questions[currentQuestionIndex];
+            
+            Array.from(answerButtons.children).forEach(button => {
+                button.style.pointerEvents = 'none';
+                if (button.dataset.isCorrect === 'true') {
+                    button.classList.add('selected');
+                }
+            });
+
+            if (isCorrect) { score++; }
+
+            quizAnswers.push({
+                question: currentQuestion.question,
+                selectedAnswer: selectedButton.innerText,
+                isCorrect: isCorrect,
+                correctAnswer: currentQuestion.answers.find(ans => ans.isCorrect).text,
+                explanation: currentQuestion.explanation
+            });
+            
+            const submitButton = document.getElementById('submit-answer-btn');
+            navContainer.removeChild(submitButton);
+
+            const explanationBox = document.createElement('div');
+            explanationBox.classList.add('feedback-box', isCorrect ? 'correct' : 'wrong');
+            explanationBox.innerHTML = `<strong>${isCorrect ? '정답입니다!' : '아쉽지만 오답입니다.'}</strong><br>${currentQuestion.explanation}`;
+            navContainer.appendChild(explanationBox);
+
+            const nextButton = document.createElement('button');
+            nextButton.innerText = (currentQuestionIndex === questions.length - 1) ? '결과보기' : '다음으로';
+            nextButton.classList.add('button', 'nav-button');
+            nextButton.addEventListener('click', goToNext);
+            navContainer.appendChild(nextButton);
+        }
+
+        function goToNext() {
+            showLoading();
+            setTimeout(() => {
+                hideLoading();
+                currentQuestionIndex++;
+                if (currentQuestionIndex < questions.length) {
+                    showQuestion();
+                } else {
+                    showResult();
+                }
+            }, 500);
+        }
+
+        function showResult() {
+            showLoading();
+            setTimeout(() => {
+                hideLoading();
+                questionContainer.classList.add('hidden');
+                resultScreen.classList.remove('hidden');
+
+                if (score >= 4) {
+                    const successMessage = document.createElement('div');
+                    successMessage.classList.add('success-message');
+                    successMessage.innerHTML = `
+                        <svg class="trophy-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M16,11.5A2.5,2.5 0 0,1 18.5,9A2.5,2.5 0 0,1 21,11.5V12.5C21,13.04 20.76,13.52 20.37,13.81L19.33,14.61C19.14,14.77 19,15 19,15.24V18A2,2 0 0,1 17,20H7A2,2 0 0,1 5,18V15.24C5,15 4.86,14.77 4.67,14.61L3.63,13.81C3.24,13.52 3,13.04 3,12.5V11.5A2.5,2.5 0 0,1 5.5,9A2.5,2.5 0 0,1 8,11.5V12.5H16V11.5M16,2V4H8V2H16M19,12.5V11.5A4.5,4.5 0 0,0 14.5,7A4.5,4.5 0 0,0 10,11.5V12.5H14V14.67L15.3,13.63C15.69,13.34 16.21,13.34 16.6,13.63L19,15.33V12.5M8,12.5V11.5A4.5,4.5 0 0,0 3.5,7A4.5,4.5 0 0,0 -1,11.5V12.5H3V15.33L5.4,13.63C5.79,13.34 6.31,13.34 6.7,13.63L8,14.67V12.5Z" /></svg>
+                        <h2>축하합니다. 퀴즈를 통과하셨습니다.</h2>
+                        <p>스탬프를 받으세요!</p>
+                    `;
+                    resultScreen.insertBefore(successMessage, resultScreen.firstChild);
+                } else {
+                    const failureMessage = document.createElement('div');
+                    failureMessage.classList.add('failure-message');
+                    failureMessage.innerHTML = `<p>총 ${score}/5 문제를 맞추셨습니다.<br>다시 시도해서 4문제 이상을 맞추어 주세요.</p>`;
+                    resultScreen.insertBefore(failureMessage, resultScreen.firstChild);
+                }
+                
+                finalScoreDisplay.innerText = score;
+                quizSummary.innerHTML = '';
+
+                quizAnswers.forEach((q, index) => {
+                    const summaryItem = document.createElement('div');
+                    summaryItem.classList.add('quiz-summary-item');
+                    summaryItem.innerHTML = `
+                        <h3>Q${index + 1}. ${q.question}</h3>
+                        <p>선택: ${q.selectedAnswer} (${q.isCorrect ? '<span style="color:#16a34a;">정답</span>' : '<span style="color:#dc3545;">오답</span>'})</p>
+                        ${!q.isCorrect ? `<p class="correct-answer">정답: ${q.correctAnswer}</p>` : ''}
+                        <p class="explanation">해설: ${q.explanation}</p>
+                    `;
+                    quizSummary.appendChild(summaryItem);
+                });
+            }, 500);
+        }
+
+        function restartQuiz() {
+            showLoading();
+            setTimeout(() => {
+                hideLoading();
+                const successMessage = resultScreen.querySelector('.success-message');
+                if (successMessage) { successMessage.remove(); }
+                const failureMessage = resultScreen.querySelector('.failure-message');
+                if (failureMessage) { failureMessage.remove(); }
+                
+                resultScreen.classList.add('hidden');
+                startScreen.classList.remove('hidden');
+            }, 500);
+        }
+    </script>
+</body>
+</html>
