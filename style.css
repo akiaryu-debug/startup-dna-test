@@ -1,0 +1,294 @@
+:root {
+    --bg-color: #1a1a2e;
+    --text-color: #ffffff;
+    --primary-color: #e94560;
+    --secondary-color: #16213e;
+    --accent-color: #0f3460;
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --font-main: 'Outfit', sans-serif;
+
+    /* Water/Disc Colors */
+    --color-red: #ff4d4d;
+    --color-blue: #4d4dff;
+    --color-green: #4dff4d;
+    --color-yellow: #ffff4d;
+    --color-orange: #ff944d;
+    --color-purple: #9933ff;
+    --color-cyan: #33ffff;
+    --color-pink: #ff33cc;
+    --color-gray: #808080;
+    --color-brown: #663300;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: var(--font-main);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#app {
+    width: 100%;
+    height: 100%;
+    max-width: 600px;
+    position: relative;
+    background: radial-gradient(circle at top right, #16213e 0%, #1a1a2e 100%);
+}
+
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.95);
+    z-index: 0;
+}
+
+.screen.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: scale(1);
+    z-index: 1;
+}
+
+/* Main Menu */
+#main-menu {
+    justify-content: center;
+}
+
+.title {
+    font-size: 4rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 3rem;
+    background: linear-gradient(45deg, #ff4d4d, #4d4dff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+}
+
+/* Buttons */
+.btn-primary,
+.btn-secondary {
+    padding: 1rem 3rem;
+    font-size: 1.5rem;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: var(--font-main);
+    font-weight: 500;
+    transition: transform 0.1s, box-shadow 0.2s;
+    margin: 0.5rem;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, var(--primary-color), #ff6b6b);
+    color: white;
+    box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
+}
+
+.btn-secondary {
+    background: var(--glass-bg);
+    color: white;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+}
+
+.btn-primary:active,
+.btn-secondary:active {
+    transform: scale(0.95);
+}
+
+/* Level Selection */
+.header {
+    width: 100%;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(26, 26, 46, 0.8);
+    backdrop-filter: blur(10px);
+    z-index: 10;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    padding: 2rem;
+    width: 100%;
+    overflow-y: auto;
+}
+
+.level-btn {
+    aspect-ratio: 1;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 15px;
+    color: white;
+    font-size: 1.2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.level-btn.locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.level-btn.completed {
+    border-color: var(--color-green);
+    color: var(--color-green);
+}
+
+.level-btn:not(.locked):hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Game Board - Rods & Discs */
+.tubes-container {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    /* Align to bottom */
+    flex-wrap: wrap;
+    gap: 4rem;
+    /* More space for rods */
+    padding: 2rem;
+    align-content: center;
+}
+
+.tube {
+    width: 10px;
+    /* Thin rod */
+    height: 220px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 5px 5px 0 0;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    margin-bottom: 20px;
+    /* Space for base */
+}
+
+/* Base of the rod */
+.tube::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+}
+
+.tube.selected::after {
+    background: var(--primary-color);
+    box-shadow: 0 0 15px rgba(233, 69, 96, 0.5);
+}
+
+.water {
+    width: 60px;
+    /* Disc width */
+    height: 40px;
+    /* Disc height */
+    border-radius: 10px;
+    margin-bottom: 2px;
+    transition: none;
+    /* JS handles animation */
+    position: relative;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 2;
+}
+
+/* Hole in the disc */
+.water::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 100%;
+    /* Full height to look like it's on the rod */
+    background: rgba(0, 0, 0, 0.2);
+    /* Darker center to simulate hole/rod shadow */
+    border-radius: 2px;
+}
+
+/* Modal */
+.modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+.modal.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal-content {
+    background: rgba(30, 30, 50, 0.9);
+    padding: 2rem;
+    border-radius: 20px;
+    text-align: center;
+    border: 1px solid var(--glass-border);
+    min-width: 300px;
+}
+
+.modal-content h2 {
+    margin-bottom: 1rem;
+    color: var(--color-green);
+}
+
+.modal-actions {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
