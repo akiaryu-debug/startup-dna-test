@@ -138,6 +138,7 @@ body {
 .grid-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
+
     gap: 1rem;
     padding: 2rem;
     width: 100%;
@@ -180,41 +181,72 @@ body {
     width: 100%;
     display: flex;
     justify-content: center;
-    align-items: flex-end;
-    /* Align to bottom */
+    align-items: center;
     flex-wrap: wrap;
-    gap: 4rem;
-    /* More space for rods */
+    gap: 2rem;
     padding: 2rem;
-    align-content: center;
+    overflow-y: auto;
 }
 
 .tube {
-    width: 10px;
-    /* Thin rod */
-    height: 220px;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 5px 5px 0 0;
-    position: relative;
-    cursor: pointer;
+    width: 80px;
+    height: 180px;
+    /* Default for 4 discs */
     display: flex;
     flex-direction: column-reverse;
     align-items: center;
-    margin-bottom: 20px;
-    /* Space for base */
+    justify-content: flex-start;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s;
 }
 
-/* Base of the rod */
+.tube.large {
+    height: 340px;
+    /* For 8 discs */
+}
+
+/* Rod visual */
+.tube::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px 10px 0 0;
+    z-index: 1;
+    transition: box-shadow 0.2s, background 0.2s;
+}
+
+/* Base visual */
 .tube::after {
     content: '';
     position: absolute;
     bottom: -10px;
     left: 50%;
     transform: translateX(-50%);
-    width: 80px;
+    width: 100px;
     height: 10px;
     background: rgba(255, 255, 255, 0.5);
     border-radius: 5px;
+    z-index: 1;
+    transition: box-shadow 0.2s, background 0.2s;
+}
+
+.tube:hover {
+    transform: translateY(-5px);
+}
+
+.tube.selected {
+    transform: translateY(-10px);
+}
+
+.tube.selected::before {
+    background: var(--primary-color);
+    box-shadow: 0 0 15px var(--primary-color), 0 0 25px var(--primary-color);
 }
 
 .tube.selected::after {

@@ -16,6 +16,7 @@ class Game {
         this.tubes = []; // Array of arrays (stacks of colors)
         this.selectedTubeIndex = -1;
         this.isAnimating = false;
+        this.maxCapacity = 4; // Default capacity
         this.history = []; // For undo (optional, but good for structure)
 
         // DOM Elements
@@ -90,20 +91,32 @@ class Game {
         // Level 11-20: 8-12 tubes, 6-9 colors
 
         let numColors, numTubes, numEmpty;
+        let capacity = 4;
 
-        if (levelNum <= 3) { numColors = 3; numEmpty = 2; }
-        else if (levelNum <= 7) { numColors = 4; numEmpty = 2; }
-        else if (levelNum <= 12) { numColors = 6; numEmpty = 2; }
-        else if (levelNum <= 16) { numColors = 8; numEmpty = 2; }
-        else { numColors = 9; numEmpty = 2; } // Max difficulty
+        if (levelNum <= 3) { numColors = 3; numEmpty = 2; capacity = 4; }
+        else if (levelNum <= 7) { numColors = 4; numEmpty = 2; capacity = 4; }
+        else if (levelNum <= 10) { numColors = 6; numEmpty = 2; capacity = 4; }
+        else if (levelNum <= 14) { numColors = 8; numEmpty = 2; capacity = 8; }
+        else if (levelNum <= 20) {
+            numColors = 9;
+            numEmpty = 2;
+            capacity = 8; // Increase difficulty
+        } else {
+            // Challenge Mode (Level 21+)
+            numColors = 10; // Max colors
+            numEmpty = 2;
+            capacity = 8;
+        }
 
         numTubes = numColors + numEmpty;
 
         // Create sorted tubes first
         let tubes = [];
         for (let i = 0; i < numColors; i++) {
-            // Each tube has 4 segments of the same color
-            tubes.push([i, i, i, i]);
+            // Each tube has 'capacity' segments of the same color
+            let tube = [];
+            for (let j = 0; j < capacity; j++) tube.push(i);
+            tubes.push(tube);
         }
         // Add empty tubes
         for (let i = 0; i < numEmpty; i++) {
@@ -113,20 +126,22 @@ class Game {
         // Shuffle logic: Perform random valid moves to mix them up
         // This ensures the level is solvable
         let movesToMake = levelNum * 5 + 10; // More shuffles for higher levels
+        if (levelNum > 20) movesToMake = 200; // Challenge mode shuffle
+
         let safetyCounter = 0;
 
-        while (movesToMake > 0 && safetyCounter < 1000) {
+        while (movesToMake > 0 && safetyCounter < 2000) {
             let from = Math.floor(Math.random() * numTubes);
             let to = Math.floor(Math.random() * numTubes);
 
-            if (from !== to && tubes[from].length > 0 && tubes[to].length < 4) {
+            if (from !== to && tubes[from].length > 0 && tubes[to].length < capacity) {
                 tubes[to].push(tubes[from].pop());
                 movesToMake--;
             }
             safetyCounter++;
         }
 
-        return { tubes, numColors };
+        return { tubes, numColors, capacity };
     }
 
     startLevel(levelNum) {
@@ -135,6 +150,7 @@ class Game {
 
         const levelData = this.generateLevel(levelNum);
         this.tubes = levelData.tubes; // Array of arrays of color indices
+        this.maxCapacity = levelData.capacity;
         this.selectedTubeIndex = -1;
 
         this.switchScreen('game');
@@ -179,7 +195,7 @@ class Game {
         console.log('From:', [...fromTube], 'To:', [...toTube]);
 
         if (fromTube.length === 0) { console.log('Fail: Source empty'); return false; }
-        if (toTube.length === 4) { console.log('Fail: Dest full'); return false; }
+        if (toTube.length === this.maxCapacity) { console.log('Fail: Dest full'); return false; }
 
         const colorToMove = fromTube[fromTube.length - 1];
 
@@ -211,7 +227,7 @@ class Game {
         }
 
         // Calculate available space
-        let spaceInDest = 4 - toTube.length;
+        let spaceInDest = this.maxCapacity - toTube.length;
         let actualMove = Math.min(countToMove, spaceInDest);
 
         // Visual Animation
@@ -319,7 +335,7 @@ class Game {
         // Win if all tubes are either empty or full with same color
         for (let tube of this.tubes) {
             if (tube.length === 0) continue;
-            if (tube.length !== 4) return false; // Not full
+            if (tube.length !== this.maxCapacity) return false; // Not full
 
             const firstColor = tube[0];
             for (let color of tube) {
@@ -339,12 +355,11 @@ class Game {
 
         for (let i = 1; i <= this.maxLevels; i++) {
             const btn = document.createElement('div');
-            btn.className = `level-btn ${i > maxUnlocked ? 'locked' : ''} ${i < maxUnlocked ? 'completed' : ''}`;
+            // Unlock all levels for testing
+            btn.className = `level-btn ${i < maxUnlocked ? 'completed' : ''}`;
             btn.textContent = i;
 
-            if (i <= maxUnlocked) {
-                btn.addEventListener('click', () => this.startLevel(i));
-            }
+            btn.addEventListener('click', () => this.startLevel(i));
 
             this.ui.levelsGrid.appendChild(btn);
         }
@@ -355,7 +370,8 @@ class Game {
 
         this.tubes.forEach((tube, index) => {
             const tubeEl = document.createElement('div');
-            tubeEl.className = `tube ${index === this.selectedTubeIndex ? 'selected' : ''}`;
+            // Add 'large' class if capacity is greater than 4
+            tubeEl.className = `tube ${index === this.selectedTubeIndex ? 'selected' : ''} ${this.maxCapacity > 4 ? 'large' : ''}`;
             tubeEl.onclick = () => this.handleTubeClick(index);
 
             // Render water segments
@@ -387,12 +403,29 @@ class Game {
 
         if (this.level === this.maxLevels) {
             h2.textContent = "Game Completed!";
-            p.textContent = "You've mastered all levels!";
-            document.getElementById('btn-next-level').style.display = 'none';
+            p.textContent = "You've unlocked Challenge Mode!";
+            document.getElementById('btn-next-level').textContent = "Challenge Mode";
+            document.getElementById('btn-next-level').style.display = 'block';
+            document.getElementById('btn-next-level').onclick = () => {
+                this.hideModal();
+                this.startLevel(21); // Challenge Mode
+            };
+        } else if (this.level > this.maxLevels) {
+            h2.textContent = "Challenge Complete!";
+            p.textContent = "Incredible skill!";
+            document.getElementById('btn-next-level').textContent = "Play Again";
+            document.getElementById('btn-next-level').onclick = () => {
+                this.hideModal();
+                this.startLevel(21);
+            };
         } else {
             h2.textContent = "Level Complete!";
             p.textContent = "Great job!";
+            document.getElementById('btn-next-level').textContent = "Next Level";
             document.getElementById('btn-next-level').style.display = 'block';
+            // Reset onclick just in case
+            document.getElementById('btn-next-level').onclick = null; // Will use default listener
+            // Re-attach default listener if needed, or better: handle logic in the main listener
         }
 
         this.ui.winModal.classList.remove('hidden');
